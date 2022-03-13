@@ -199,7 +199,27 @@
             <h1 id="基因注释评估"><a href="#基因注释评估" class="headerlink" title="基因注释评估"></a>基因注释评估</h1><h2 id="基因注释评估的必要性"><a href="#基因注释评估的必要性" class="headerlink" title="基因注释评估的必要性"></a>基因注释评估的必要性</h2><p>基因组计划的一个基本目标是得到准确的基因结构注释，但是有些难以实现，即使是人类基因组，拥有最为丰富的研究资源，但是几个基因组数据库中的基因注释信息都有所不同，并不能说哪一套基因注释是完整的、精准的。 许多基因组有多次的重新注释，在这种情况下，需要比较不同的注释版本。此外，现有许多基因预测工具，它们对同一基因组注释会产生不同的注释结果，预测软件开发者可以通过基因注释评估发现预测软件的可扩展性（可能软件对一些物种准确，但对其他物种不准确），通过评估不同参数设置下的注释结果揭示那些参数需要调整。现有不同的基因注释程序的作者使用不同的度量，使注释结果的比较变得复杂，需要一个标准的工具进行比较。</p>
 <h2 id="人工"><a href="#人工" class="headerlink" title="人工"></a>人工</h2><p>现有一些基因组浏览器可以直接访问基因注释的结果，可以精细的对比不同版本的基因注释，但是这个方法很慢、容易出错、不自动化、不精确、对于研究资源有限的物种的注释结果的比较没有可扩展性。</p>
 <h2 id="数量和长度"><a href="#数量和长度" class="headerlink" title="数量和长度"></a>数量和长度</h2><p>这是一种常规的手段，在基因模型的数量、外显子水平、转录本水平上统计数量和平均长度。<a class="link" target="_blank" rel="noopener" href="https://genomeqc.maizegdb.org/">GenomeQC<i class="fas fa-external-link-alt"></i></a><a href="#GenomeQC"><sup>1</sup></a>发表于2020年，有命令行版和网页版，但是网页版需要压缩的基因组文件和注释文件都小于1Gb.此外，GenomeQC还包括BUSCO计算基因注释的完整性。</p>
-<h2 id="特异性和灵敏度"><a href="#特异性和灵敏度" class="headerlink" title="特异性和灵敏度"></a>特异性和灵敏度</h2><p>混淆矩阵和计算方法<a href="#EDTA"><sup>2</sup></a><br>|        |   | 真实值 | 真实值 |<br>|——–|—|——–|——–|<br>|        |   | 1      | 0      |<br>| 预测值 | 1 | TP     | FP     |<br>| 预测值 | 0 | TN     | FN     |<br>$$灵敏度=\frac{TP}{TP+FN}$$<br>$$特异性=\frac{TN}{TN+FP}$$<br>$$准确性=\frac{TP+TN}{TP+TN+FP+FN}$$<br>$$精密度=\frac{TP}{TP+FP}$$<br>$$F_1=\frac{2TP}{2TP+FP+FN}$$<br>$$FDR(假发现率)=\frac{FP}{TP+FP}$$<br>以上是模型评估中用到的评估公式，但是和基因注释中说到的特异性和灵敏度的内涵有所不同。  </p>
+<h2 id="特异性和灵敏度"><a href="#特异性和灵敏度" class="headerlink" title="特异性和灵敏度"></a>特异性和灵敏度</h2><p>混淆矩阵和计算方法<a href="#EDTA"><sup>2</sup></a>  </p>
+<table>
+<thead>
+<tr>
+<th>混淆矩阵</th>
+<th align="center">预测值=1</th>
+<th align="center">预测值=0</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>真实值=1</td>
+<td align="center">TP</td>
+<td align="center">FN</td>
+</tr>
+<tr>
+<td>真实值=0</td>
+<td align="center">FP</td>
+<td align="center">TN</td>
+</tr>
+</tbody></table>
+<p>$$灵敏度=\frac{TP}{TP+FN}$$<br>$$特异性=\frac{TN}{TN+FP}$$<br>$$准确性=\frac{TP+TN}{TP+TN+FP+FN}$$<br>$$精密度=\frac{TP}{TP+FP}$$<br>$$F_1=\frac{2TP}{2TP+FP+FN}$$<br>$$FDR(假发现率)=\frac{FP}{TP+FP}$$<br>以上是模型评估中用到的评估公式，但是和基因注释中说到的特异性和灵敏度的内涵有所不同。  </p>
 <h3 id="不同基因注释版本的比较"><a href="#不同基因注释版本的比较" class="headerlink" title="不同基因注释版本的比较"></a>不同基因注释版本的比较</h3><h4 id="与金标准比较"><a href="#与金标准比较" class="headerlink" title="与金标准比较"></a>与金标准比较</h4><p>[GFPE] (下载地址：<a class="link" href="ftp://anonymous@iubio.bio.indiana.edu/molbio/genefind/">ftp://anonymous@iubio.bio.indiana.edu/molbio/genefind/<i class="fas fa-external-link-alt"></i></a>)<a href="#GFPE"><sup>3</sup></a>发表于2003年，可以在编码水平、外显子水平和蛋白质水平统计灵敏度、特异性和F1值（具体计算方式文章中没有讲）。使用时需要指定一个注释文件为参考，另一个为预测，并认为参考是完全正确。<br>这篇文章的创新点：<br>将拼接边界完全准确预测定义为“类型1”，正确预测至少一个剪接边界的为”类型2”，外显子重叠超过某个阈值的为”类型3”。*表示只有类型1的，**表示类型1和类型2，***表示类型1+类型2+类型3，分别计算它们的灵敏度和特异性。</p>
 <p><a class="link" target="_blank" rel="noopener" href="https://mblab.wustl.edu/software.html">Eval<i class="fas fa-external-link-alt"></i></a><a href="#Eval"><sup>4</sup></a>发表于2003年<br>指标包括上述的常规特征（编码、基因组、外显子、内含子平均长度以及外显子平均数量），敏感性和特异性。<br>文章的创新点：  </p>
 <ol>
@@ -211,53 +231,49 @@
 <li>用RNA-seq评估注释；  </li>
 <li>针对转录物含量低，无法获得连续read的，可以通过当前的覆盖深度和碱基覆盖率下通过模型判断转录物是否被读段完全支持；  </li>
 <li>计算剪切位点是否被完全支持，用到了匹配熵E，方法没看明白。<br>文章用该流程比较了人类基因组的5个注释，RefSef是最为保守的。评估恒河猴的注释发现很不完整。  <h2 id="BUSCO"><a href="#BUSCO" class="headerlink" title="BUSCO"></a>BUSCO</h2>BUSCO<a href="#BUSCO"><sup>7</sup></a>是一组基准通用的单拷贝同源基因，常常被作为基因组组装和注释完整性的定量测量。<br>GenomeQC<a href="#GenomeQC"><sup>1</sup></a>可以产生BUSCO堆叠图通过邮件发送给用户，可视化的图片可以让用户直观地比较两个注释的完整性。如：   <center>
-<img src="/.io//BUSCO.png" width="25%" height="25%">
-</center>  
-## AED(注释编辑距离)  
-虽然上述的灵敏度、特异性和准确性等质量指标可以便捷的评估基因注释流程的性能，但是它们是以参考基因模型的存在为前提的，ADE测量两个注释之间的距离，并且不会假设哪一个更正确。  
-MAKER2[<sup>8</sup>](#MAKER2)中使用AED量化基因注释及其支持证据——EST、蛋白质和mRNA-Seq之间的一致性。  
-AED的值在0~1之间，为0表示内含子外显子坐标与证据之间精确匹配，为1表示没有证据支持。
-## 参考文献</li>
+<img src="/.io//BUSCO.png" width="60%" height="25%">
+</center>  </li>
 </ol>
-<div id="GenomeQC"></div>
+<h2 id="AED-注释编辑距离"><a href="#AED-注释编辑距离" class="headerlink" title="AED(注释编辑距离)"></a>AED(注释编辑距离)</h2><p>虽然上述的灵敏度、特异性和准确性等质量指标可以便捷的评估基因注释流程的性能，但是它们是以参考基因模型的存在为前提的，ADE测量两个注释之间的距离，并且不会假设哪一个更正确。<br>MAKER2<a href="#MAKER2"><sup>8</sup></a>中使用AED量化基因注释及其支持证据——EST、蛋白质和mRNA-Seq之间的一致性。<br>AED的值在0~1之间，为0表示内含子外显子坐标与证据之间精确匹配，为1表示没有证据支持。  </p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><div id="GenomeQC"></div>
 
 <ul>
-<li>[1]<br>  Manchanda, N., et al., GenomeQC: a quality assessment tool for genome assemblies and gene structure annotations. BMC Genomics, 2020. 21(1).  </li>
+<li>[1] Manchanda, N., et al., GenomeQC: a quality assessment tool for genome assemblies and gene structure annotations. BMC Genomics, 2020. 21(1).  </li>
 </ul>
 <div id="EDTA"></div>
 
 <ul>
-<li>[2]<br>  Ou S, Su W, Liao Y, et al. Benchmarking transposable element annotation methods for creation of a streamlined, comprehensive pipeline[J]. Genome Biology, 2019,20(1):275.</li>
+<li>[2]Ou S, Su W, Liao Y, et al. Benchmarking transposable element annotation methods for creation of a streamlined, comprehensive pipeline[J]. Genome Biology, 2019,20(1):275.</li>
 </ul>
 <div id="GFPE"></div>
 
 <ul>
-<li>[3]<br>  Wang, J. and E. Kraemer, GFPE: gene-finding program evaluation. Bioinformatics, 2003. 19(13): p. 1712-1713.  </li>
+<li>[3]Wang, J. and E. Kraemer, GFPE: gene-finding program evaluation. Bioinformatics, 2003. 19(13): p. 1712-1713.  </li>
 </ul>
 <div id="Eval"></div>
 
 <ul>
-<li>[4]<br>  Keibler, E. and M.R. Brent, Eval: a software package for analysis of genome annotations. BMC Bioinformatics, 2003. 4: p. 50.  </li>
+<li>[4]Keibler, E. and M.R. Brent, Eval: a software package for analysis of genome annotations. BMC Bioinformatics, 2003. 4: p. 50.  </li>
 </ul>
 <div id="ParsEval"></div>
 
 <ul>
-<li>[5]<br>  Standage, D.S. and V.P. Brendel, ParsEval: parallel comparison and analysis of gene structure annotations. BMC Bioinformatics, 2012. 13: p. 187.</li>
+<li>[5]Standage, D.S. and V.P. Brendel, ParsEval: parallel comparison and analysis of gene structure annotations. BMC Bioinformatics, 2012. 13: p. 187.</li>
 </ul>
 <div id="EAAP"></div>
 
 <ul>
-<li>[6]<br>  王颖与刘麟, 一种基于RNA-Seq的基因组注解评估方法. 科学通报, 2013. 58(33): 第3471-3482页.  </li>
+<li>[6]王颖与刘麟, 一种基于RNA-Seq的基因组注解评估方法. 科学通报, 2013. 58(33): 第3471-3482页.  </li>
 </ul>
 <div id="BUSCO"></div>
 
 <ul>
-<li>[7]<br>  Simão, F.A., et al., BUSCO: assessing genome assembly and annotation completeness with single-copy orthologs. Bioinformatics, 2015. 31(19): p. 3210-3212.</li>
+<li>[7]Simão, F.A., et al., BUSCO: assessing genome assembly and annotation completeness with single-copy orthologs. Bioinformatics, 2015. 31(19): p. 3210-3212.</li>
 </ul>
 <div id="MAKER2"></div>
 
 <ul>
-<li>[8]<br>  Holt, C. and M. Yandell, MAKER2: an annotation pipeline and genome-database management tool for second-generation genome projects. BMC Bioinformatics, 2011. 12(1): p. 491.</li>
+<li>[8]Holt, C. and M. Yandell, MAKER2: an annotation pipeline and genome-database management tool for second-generation genome projects. BMC Bioinformatics, 2011. 12(1): p. 491.</li>
 </ul>
 
         </div>
@@ -495,7 +511,7 @@ AED的值在0~1之间，为0表示内含子外显子坐标与证据之间精确�
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E5%9B%A0%E6%B3%A8%E9%87%8A%E8%AF%84%E4%BC%B0"><span class="nav-number">1.</span> <span class="nav-text">基因注释评估</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E5%9B%A0%E6%B3%A8%E9%87%8A%E8%AF%84%E4%BC%B0%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">基因注释评估的必要性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%BA%E5%B7%A5"><span class="nav-number">1.2.</span> <span class="nav-text">人工</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E9%87%8F%E5%92%8C%E9%95%BF%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">数量和长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E5%BC%82%E6%80%A7%E5%92%8C%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="nav-number">1.4.</span> <span class="nav-text">特异性和灵敏度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%9F%BA%E5%9B%A0%E6%B3%A8%E9%87%8A%E7%89%88%E6%9C%AC%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.4.1.</span> <span class="nav-text">不同基因注释版本的比较</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E%E9%87%91%E6%A0%87%E5%87%86%E6%AF%94%E8%BE%83"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">与金标准比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%A4%E4%B8%A4%E6%AF%94%E8%BE%83"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">两两比较</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8RNA-Seq%E8%AF%84%E4%BC%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">利用RNA-Seq评估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BUSCO"><span class="nav-number">1.5.</span> <span class="nav-text">BUSCO</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E5%9B%A0%E6%B3%A8%E9%87%8A%E8%AF%84%E4%BC%B0"><span class="nav-number">1.</span> <span class="nav-text">基因注释评估</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E5%9B%A0%E6%B3%A8%E9%87%8A%E8%AF%84%E4%BC%B0%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">基因注释评估的必要性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%BA%E5%B7%A5"><span class="nav-number">1.2.</span> <span class="nav-text">人工</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E9%87%8F%E5%92%8C%E9%95%BF%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">数量和长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E5%BC%82%E6%80%A7%E5%92%8C%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="nav-number">1.4.</span> <span class="nav-text">特异性和灵敏度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%9F%BA%E5%9B%A0%E6%B3%A8%E9%87%8A%E7%89%88%E6%9C%AC%E7%9A%84%E6%AF%94%E8%BE%83"><span class="nav-number">1.4.1.</span> <span class="nav-text">不同基因注释版本的比较</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8E%E9%87%91%E6%A0%87%E5%87%86%E6%AF%94%E8%BE%83"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">与金标准比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%A4%E4%B8%A4%E6%AF%94%E8%BE%83"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">两两比较</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8RNA-Seq%E8%AF%84%E4%BC%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">利用RNA-Seq评估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BUSCO"><span class="nav-number">1.5.</span> <span class="nav-text">BUSCO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AED-%E6%B3%A8%E9%87%8A%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB"><span class="nav-number">1.6.</span> <span class="nav-text">AED(注释编辑距离)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">1.7.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
